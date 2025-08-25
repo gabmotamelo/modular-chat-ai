@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  redis:
+    image: redis:7
+    ports: ["6379:6379"]
+
+  backend:
+    build:
+      context: ../../backend
+    environment:
+      APP_PORT: 8080
+      REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: "*"
+      LOG_LEVEL: info
+      MOCK_MODE: 1
+    ports: ["8080:8080"]
+    depends_on: [redis]
+    volumes:
+      - ../../backend/app/rag/chroma_db:/app/app/rag/chroma_db
+
+
+  frontend:
+    build:
+      context: ../../frontend
+    environment:
+      - VITE_API_URL=http://localhost:8080
+    ports: ["5173:5173"]
+    depends_on: [backend]

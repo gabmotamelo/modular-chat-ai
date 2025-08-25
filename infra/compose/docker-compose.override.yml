@@ -1,0 +1,33 @@
+version: "3.9"
+services:
+  backend:
+    environment:
+      # Faz os print() aparecerem na hora
+      PYTHONUNBUFFERED: "1"
+      LOG_LEVEL: DEBUG              # mais verboso (seu logger usa isso)
+      # RAG (LangChain, local)
+      RAG_K: "4"
+      COLLECTION_NAME: infinitepay
+      PERSIST_DIR: /app/app/rag/chroma_db
+      EMBEDDING_MODEL: all-MiniLM-L6-v2
+      CHROMA_TELEMETRY_ANONYMOUS: "False"
+      MAX_SNIPPET_CHARS: "900"
+      # Se quiser ler URLs de um JSON ao invés do pages_auto.py:
+      # PAGES_FILE: /app/app/rag/pages.json
+
+    volumes:
+      # Persiste o índice e (se usar) o cache de páginas
+      - ../../backend/app/rag/chroma_db:/app/app/rag/chroma_db
+      - ../../backend/app/rag/page_cache:/app/app/rag/page_cache
+
+    # (Opcional) Força comando com access log do Uvicorn
+    # cuidado: só use se seu Dockerfile não já define outro CMD
+    # command: uvicorn app.main:app --host 0.0.0.0 --port 8080 --log-level info --proxy-headers
+
+  redis:
+    # (Opcional) healthcheck simples
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
