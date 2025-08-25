@@ -14,7 +14,7 @@ type Conversation = {
   messages: ChatMessage[]
 }
 
-const API_URL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:8080'
+const API_URL = 'https://modular-chat-ai.onrender.com'
 function uid(){ return Math.random().toString(36).slice(2,9) }
 
 export default function App(){
