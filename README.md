@@ -2,6 +2,8 @@
 
 **Default:** 100% offline (embeddings locais + `MOCK_MODE=1`).  
 
+---
+
 ## Run (Local)
 ```bash
 python -m venv .venv && source .venv/bin/activate
@@ -23,18 +25,24 @@ npm install
 npm run dev -- --host
 ```
 
+---
+
 ## Docker Compose
 ```bash
 docker-compose -f infra/compose/docker-compose.yml up --build
 # Frontend em http://localhost:5173 , Backend em http://localhost:8080
 ```
 
+---
+
 ## Kubernetes (minikube/k3d)
 ```bash
 kubectl apply -f infra/k8s
 ```
 
-## API
+---
+
+## API (Local)
 POST `/chat`
 ```json
 {
@@ -44,8 +52,31 @@ POST `/chat`
 }
 ```
 
+---
+
+## API (Deploy Render)
+
+**Base URL:** `https://modular-chat-ai.onrender.com`
+
+Exemplo de chamada:
+```bash
+curl --location 'https://modular-chat-ai.onrender.com/chat' --header 'Content-Type: application/json' --data '{
+    "message": "30 x 30",
+    "user_id": "u1",
+    "conversation_id": "conv-2"
+}'
+```
+
+---
+
+## Interface (Deploy Render)
+
+URL de produção: **https://modular-chat-ai-front.onrender.com**
+
+---
+
 ## Structured Logs
-Example log entries from different agents:
+Exemplo de entradas de log:
 
 **KnowledgeAgent:**
 ```json
@@ -78,7 +109,7 @@ Example log entries from different agents:
 }
 ```
 
-
+---
 
 ## Tests
 ```bash
