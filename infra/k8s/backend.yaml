@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: compose/modular-chatbot-backend:latest
+        image: modular-chatbot-backend:latest
         env:
         - { name: REDIS_URL, value: "redis://redis:6379/0" }
         - { name: LOG_LEVEL, value: "info" }
