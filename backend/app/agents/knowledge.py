@@ -95,7 +95,9 @@ def _dedupe_keep_order(items: List[str]) -> List[str]:
     return out
 
 def knowledge_answer(message: str, user_id: str, conversation_id: str, log):
-    \"\"\"Retorna (response_text, source_agent_response_text).\"\"\"
+    """
+    Retorna (response_text, source_agent_response_text).
+    """
     t0 = time.perf_counter()
 
     msg = bleach.clean(message or "", tags=[], attributes={}, strip=True).strip()
@@ -120,10 +122,10 @@ def knowledge_answer(message: str, user_id: str, conversation_id: str, log):
     k = int(os.getenv("RAG_K", "4") or "4")
     retr = get_retriever(k=k)
     try:
-        docs = retr.invoke(msg)  # LC >= 0.2
+        docs = retr.invoke(msg)
     except Exception:
-        docs = retr.get_relevant_documents(msg)  # fallback
-    print(f\"[KnowledgeAgent] msg='{msg}' k={k} retrieved={len(docs)}\", flush=True)
+        docs = retr.get_relevant_documents(msg)
+    print(f"[KnowledgeAgent] msg='{msg}' k={k} retrieved={len(docs) if docs else 0}", flush=True)
 
     valid_docs = []
     valid_sources = []
@@ -138,7 +140,7 @@ def knowledge_answer(message: str, user_id: str, conversation_id: str, log):
 
     if not valid_docs:
         ms = int((time.perf_counter()-t0)*1000)
-        print(f\"[KnowledgeAgent] no_valid_hits time={ms}ms\", flush=True)
+        print(f"[KnowledgeAgent] no_valid_hits time={ms}ms", flush=True)
         log.info({
             "agent":"KnowledgeAgent",
             "conversation_id":conversation_id,
@@ -153,7 +155,7 @@ def knowledge_answer(message: str, user_id: str, conversation_id: str, log):
 
     ans = _extractive_answer(valid_docs, max_chars=int(os.getenv("MAX_SNIPPET_CHARS","900") or "900"))
     ms = int((time.perf_counter()-t0)*1000)
-    print(f\"[KnowledgeAgent] ok sources={valid_sources} time={ms}ms\", flush=True)
+    print(f"[KnowledgeAgent] ok sources={valid_sources} time={ms}ms", flush=True)
 
     log.info({
         "agent":"KnowledgeAgent",
@@ -165,6 +167,6 @@ def knowledge_answer(message: str, user_id: str, conversation_id: str, log):
     })
 
     fontes = "\\n".join(f"- {u}" for u in valid_sources) if valid_sources else "- (sem fonte detectada)"
-    response = f\"{ans}\\n\\nFontes:\\n{fontes}\"
-    details = f\"Docs={len(valid_docs)} | Sources: {valid_sources} | time={ms}ms\"
+    response = f"{ans}\n\nFontes:\n{fontes}"
+    details = f"Docs={len(valid_docs)} | Sources: {valid_sources} | time={ms}ms"
     return response, details
