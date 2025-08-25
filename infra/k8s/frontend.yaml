@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: yourrepo/modular-chatbot-frontend:latest
+        image: modular-chatbot-frontend:latest
         env:
         - { name: VITE_API_URL, value: "http://chatbot-backend" }
         ports: [{ containerPort: 5173 }]
